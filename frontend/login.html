@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登录</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+  <h2>登录</h2>
+  <input type="email" id="login-email" placeholder="邮箱">
+  <input type="password" id="login-password" placeholder="密码">
+  <button onclick="login()">登录</button>
+  <p class="link" onclick="location.href='register.html'">没有账号？去注册</p>
+</div>
+
+<script>
+  async function login() {
+    const email = document.getElementById("login-email").value;
+    const password = document.getElementById("login-password").value;
+
+    const response = await fetch("http://localhost:5001/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      localStorage.setItem("token", data.token);
+      alert("登录成功，正在跳转...");
+      location.href = "process.html";
+    } else {
+      alert("登录失败: " + data.error);
+    }
+  }
+</script>
+</body>
+</html>

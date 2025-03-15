@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>提问</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+  <h2>提问</h2>
+  <textarea id="question" placeholder="请输入你的问题" rows="3"></textarea>
+  <button onclick="askQuestion()">提交问题</button>
+  <p id="answer"></p>
+  <p class="link" onclick="logout()">退出登录</p>
+</div>
+
+<script>
+  // 检查是否已登录
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("请先登录！");
+    location.href = "login.html";
+  }
+
+  async function askQuestion() {
+    const question = document.getElementById("question").value;
+
+    const response = await fetch("http://localhost:5001/process", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": token
+      },
+      body: JSON.stringify({ question })
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      document.getElementById("answer").innerText = "回答: " + data.answer;
+    } else {
+      alert("请求失败: " + data.error);
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem("token");
+    alert("已退出");
+    location.href = "login.html";
+  }
+</script>
+</body>
+</html>
